@@ -1,126 +1,80 @@
 # 🚗 Vehicle Management System (VMS)
 
-A full-stack web application for managing vehicles, service history, and spare parts inventory — ideal for garages, rental agencies, or fleet managers. This project showcases my skills in full-stack development, object-oriented programming, and RESTful API design.
-
----
+A full-stack application to manage vehicles, owners, maintenance records, and categories — built with Node.js, MongoDB, and React.
 
 ## 📦 Features
 
-- 🔐 User registration, login & secure JWT authentication
-- 🚘 Add, edit, delete, and search vehicles
-- 🧰 Track service records for each vehicle
-- 🔩 Manage spare parts inventory with availability status
-- 📊 Dashboard with real-time summaries and visual indicators
-- 👤 Role-based access control (Admin / User)
-- 🧠 Clean and modern UI using React
+- Add / Edit / Delete Vehicles
+- Categorize vehicles (e.g., car, motorcycle, truck)
+- Manage Owners / Customers
+- Record maintenance and service history
+- Login / Authentication with JWT
+- Store and retrieve data via MongoDB
+- Protected frontend routes
+- Clean and responsive UI with TailwindCSS
 
----
+## 🛠 Tech Stack
 
-## 🛠️ Tech Stack
+- **Frontend**: React + Vite + TailwindCSS
+- **Backend**: Node.js + Express + MongoDB + Mongoose
+- **Auth**: JWT
+- **Data Storage**: MongoDB Atlas / local MongoDB
+- **Other Tools**: Axios, React Router, dotenv, nodemon, Postman, Git
 
-| Frontend         | Backend         | Database | Tools                 |
-|------------------|------------------|----------|------------------------|
-| React, Axios     | Node.js, Express | MongoDB  | Postman, Git, JWT, dotenv |
-
----
-
-## 📁 Project Structure
+## 📁 Folder Structure
 
 ```
-vms-project/
-├── client/      # React Frontend (components, pages, services)
-├── server/      # Express Backend (routes, controllers, models)
-├── .env         # Environment variables
-└── README.md
+VMS/
+│
+├── frontend/             # React frontend
+│   └── src/pages         # Login, Vehicles, Maintenance
+│   └── src/components    # Modal components, lists
+│
+├── backend/              # Express backend
+│   └── src/models        # Mongoose schemas
+│   └── src/controllers   # Logic for each route
+│   └── src/routes        # REST API endpoints
+│
+├── seed.js               # (Optional) Initial data for DB
+└── .gitignore
 ```
 
-The codebase follows a modular and feature-first structure for scalability and maintainability.
+## ▶️ Getting Started
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js v18+
-- npm
-- MongoDB (local or MongoDB Atlas)
-
-### Installation
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/vms-project.git
+git clone https://github.com/fatemeGheysari/vms-project.git
 cd vms-project
 ```
 
-#### 1. Install dependencies:
+### 2. Setup backend
 
 ```bash
-cd client
+cd backend
 npm install
-
-cd ../server
-npm install
+npm run dev
 ```
 
-#### 2. Set up environment variables:
+### 3. Setup frontend
 
-Create a `.env` file inside the `server/` folder with the following content:
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
 
-```env
+### 4. Create `.env` file in `/backend`:
+
+```
+PORT=3000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
-PORT=5000
 ```
 
-#### 3. Start the application:
-
-```bash
-npm run start
-```
-
-This command runs both client and server concurrently.
-
 ---
 
-## 📸 Screenshots
+## 💡 Author
 
-> Coming soon — UI dashboard, vehicle listings, and service history views.
-
----
-
-## 🧠 Core Concepts
-
-- Object-Oriented Programming with Inheritance (Vehicles, SpareParts, Services)
-- MongoDB Data Modeling & Schema Design
-- Full RESTful API Structure
-- Authentication & Authorization (JWT)
-- React Hooks & State Management
-- Separation of Concerns (Frontend/Backend)
-
----
-
-## 📌 Project Status
-
-✅ MVP (Minimum Viable Product) features implemented.  
-🚧 Currently building additional modules (Admin Panel, Analytics, Notifications).
-
----
-
-## 👤 Author
-
-**Anahita [Your Last Name]**  
-🌍 Full Stack Developer  
-📫 [LinkedIn](https://www.linkedin.com/in/yourusername)
-
----
-
-## 🤝 Contributions
-
-This is a solo project, but collaboration ideas or code reviews are always welcome! Feel free to open an issue or submit a pull request.
-
----
-
-## 📝 License
-
-Licensed under the [MIT License](LICENSE).
+Fatemeh Gheysari  
+[GitHub Profile](https://github.com/fatemeGheysari)
