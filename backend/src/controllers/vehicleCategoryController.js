@@ -1,7 +1,7 @@
-const VehicleCategory = require('../models/VehicleCategory');
+import VehicleCategory from '../models/VehicleCategory.js';
 
 // Create new category
-exports.createCategory = async (req, res) => {
+export const createCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
     const newCategory = new VehicleCategory({ name, description });
@@ -13,7 +13,7 @@ exports.createCategory = async (req, res) => {
 };
 
 // Get all categories
-exports.getCategories = async (req, res) => {
+export const getCategories = async (req, res) => {
   try {
     const categories = await VehicleCategory.find();
     res.status(200).json(categories);

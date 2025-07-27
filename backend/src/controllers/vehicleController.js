@@ -1,7 +1,7 @@
-const Vehicle = require('../models/Vehicle');
+import Vehicle from '../models/Vehicle.js';
 
 // GET /api/vehicles → Get all vehicles
-exports.getAllVehicles = async (req, res) => {
+export const getAllVehicles = async (req, res) => {
   try {
     const vehicles = await Vehicle.find().populate('ownerId categoryId');
     res.json(vehicles);
@@ -11,7 +11,7 @@ exports.getAllVehicles = async (req, res) => {
 };
 
 // POST /api/vehicles → Create a new vehicle
-exports.createVehicle = async (req, res) => {
+export const createVehicle = async (req, res) => {
   try {
     const newVehicle = new Vehicle(req.body);
     const saved = await newVehicle.save();
@@ -22,7 +22,7 @@ exports.createVehicle = async (req, res) => {
 };
 
 // GET /api/vehicles/:id → Get vehicle by ID
-exports.getVehicleById = async (req, res) => {
+export const getVehicleById = async (req, res) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id).populate('ownerId categoryId');
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found' });
@@ -33,7 +33,7 @@ exports.getVehicleById = async (req, res) => {
 };
 
 // PUT /api/vehicles/:id → Update a vehicle
-exports.updateVehicle = async (req, res) => {
+export const updateVehicle = async (req, res) => {
   try {
     const updated = await Vehicle.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: 'Vehicle not found' });
@@ -44,7 +44,7 @@ exports.updateVehicle = async (req, res) => {
 };
 
 // DELETE /api/vehicles/:id → Delete a vehicle
-exports.deleteVehicle = async (req, res) => {
+export const deleteVehicle = async (req, res) => {
   try {
     const deleted = await Vehicle.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: 'Vehicle not found' });

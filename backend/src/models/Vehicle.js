@@ -1,5 +1,5 @@
 // models/Vehicle.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const vehicleSchema = new mongoose.Schema({
   plateNumber: {
@@ -33,9 +33,9 @@ const vehicleSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true 
+  timestamps: true
 });
 
 const Vehicle = mongoose.model('Vehicle', vehicleSchema);
 
-module.exports = Vehicle;
+export default Vehicle;

@@ -1,5 +1,5 @@
 //model/VehicleCategory.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const vehicleCategorySchema = new mongoose.Schema({
   name: {
@@ -14,4 +14,4 @@ const vehicleCategorySchema = new mongoose.Schema({
 
 const VehicleCategory = mongoose.model('VehicleCategory', vehicleCategorySchema);
 
-module.exports = VehicleCategory;
+export default VehicleCategory;

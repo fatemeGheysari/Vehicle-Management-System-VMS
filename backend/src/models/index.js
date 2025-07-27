@@ -1,6 +1,6 @@
 // src/models/index.js
-require('./Vehicle');
-require('./VehicleCategory');
-require('./User');
-require('./Customer');
-require('./MaintenanceRecord');
+import './Vehicle.js';
+import './VehicleCategory.js';
+import './User.js';
+import './Customer.js';
+import './MaintenanceRecord.js';

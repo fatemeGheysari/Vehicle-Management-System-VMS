@@ -1,31 +1,32 @@
-const express = require('express');
+import express from 'express';
+import {
+    getAllVehicles,
+    createVehicle,
+    getVehicleById,
+    updateVehicle,
+    deleteVehicle
+} from '../controllers/vehicleController.js';
+
+import { authMiddleware } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
-const vehicleController = require('../controllers/vehicleController');
-const authMiddleware = require('../middlewares/authMiddleware');
-
-// GET all vehicles
-router.get('/', vehicleController.getAllVehicles);
-
-// POST create vehicle
-router.post('/', vehicleController.createVehicle);
-
-// GET one vehicle
-router.get('/:id', vehicleController.getVehicleById);
-
-// PUT update vehicle
-router.put('/:id', vehicleController.updateVehicle);
-
-// DELETE vehicle
-router.delete('/:id', vehicleController.deleteVehicle);
-
-// Protect all vehicle routes
-router.use(authMiddleware);
 
 // All routes below require authentication
-router.get('/', vehicleController.getAllVehicles);
-router.post('/', vehicleController.createVehicle);
-router.get('/:id', vehicleController.getVehicleById);
-router.put('/:id', vehicleController.updateVehicle);
-router.delete('/:id', vehicleController.deleteVehicle);
+router.use(authMiddleware);
 
-module.exports = router;
+// GET all vehicles
+router.get('/', getAllVehicles);
+
+// POST create vehicle
+router.post('/', createVehicle);
+
+// GET one vehicle
+router.get('/:id', getVehicleById);
+
+// PUT update vehicle
+router.put('/:id', updateVehicle);
+
+// DELETE vehicle
+router.delete('/:id', deleteVehicle);
+
+export default router;

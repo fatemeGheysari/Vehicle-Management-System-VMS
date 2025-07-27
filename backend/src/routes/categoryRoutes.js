@@ -1,9 +1,9 @@
-//backend/src/rutes/categoryRutes.js
-const express = require('express');
+import express from 'express';
+import { createCategory, getCategories } from '../controllers/vehicleCategoryController.js';
+
 const router = express.Router();
-const categoryController = require('../controllers/vehicleCategoryController');
 
-router.post('/', categoryController.createCategory);
-router.get('/', categoryController.getCategories);
+router.post('/', createCategory);
+router.get('/', getCategories);
 
-module.exports = router;
+export default router;

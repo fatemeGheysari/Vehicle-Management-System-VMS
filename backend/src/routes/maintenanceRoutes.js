@@ -1,16 +1,31 @@
-const express = require('express');
+import express from 'express';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
+import {
+    createMaintenanceRecord,
+    getAllMaintenanceRecords,
+    deleteMaintenance
+} from '../controllers/maintenanceController.js';
+
+import Maintenance from '../models/MaintenanceRecord.js';
+
 const router = express.Router();
 
-const maintenanceController = require('../controllers/maintenanceController');
-const authMiddleware = require('../middlewares/authMiddleware');
+// OPTIONAL: Inline GET route (e.g. for testing or special route)
+router.get('/populated', async (req, res) => {
+    try {
+        const records = await Maintenance.find().populate("vehicleId");
+        res.json(records);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
-// Protect all maintenance routes with authentication middleware
+// Protect all maintenance routes
 router.use(authMiddleware);
 
-// Create a new maintenance record
-router.post('/', maintenanceController.createMaintenanceRecord);
+// Main routes
+router.post('/', createMaintenanceRecord);
+router.get('/', getAllMaintenanceRecords);
+router.delete('/:id', deleteMaintenance);
 
-// Get all maintenance records
-router.get('/', maintenanceController.getAllRecords);
-
-module.exports = router;
+export default router;

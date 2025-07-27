@@ -1,21 +1,21 @@
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
+import express from 'express';
+import cors from 'cors';
+import connectDB from './config/db.js';
 
-// route imports...
-const vehicleRoutes = require('./src/routes/vehicleRoutes');
-const authRoutes = require('./src/routes/authRoutes');
-const categoryRoutes = require('./src/routes/categoryRoutes');
-const maintenanceRoutes = require('./src/routes/maintenanceRoutes');
-const customerRoutes = require('./src/routes/customerRoutes');
+// Route imports
+import vehicleRoutes from './src/routes/vehicleRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
+import categoryRoutes from './src/routes/categoryRoutes.js';
+import maintenanceRoutes from './src/routes/maintenanceRoutes.js';
+import customerRoutes from './src/routes/customerRoutes.js';
 
+import './src/models/index.js';
 
 const app = express();
 connectDB();
-require('./src/models'); // run all models from src/models
 
 // Middlewares
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 
 // Routes
@@ -25,5 +25,6 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/customers', customerRoutes);
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
