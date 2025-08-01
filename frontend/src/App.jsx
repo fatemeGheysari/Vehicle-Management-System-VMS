@@ -4,6 +4,7 @@ import Vehicles from "./pages/Vehicles";
 import AddVehicle from "./pages/AddVehicle";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MaintenanceList from "./pages/MaintenanceList";
+import InvoiceList from './pages/InvoiceList';
 
 function App() {
   return (
@@ -30,6 +31,14 @@ function App() {
         element={
           <ProtectedRoute>
             <MaintenanceList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/invoices"
+        element={
+          <ProtectedRoute>
+            <InvoiceList />
           </ProtectedRoute>
         }
       />

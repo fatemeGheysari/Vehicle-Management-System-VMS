@@ -27,7 +27,7 @@ export const createBill = async (req, res) => {
 export const getAllBills = async (req, res) => {
     try {
         const bills = await Bill.find()
-            .populate('customer', 'name')
+            .populate('customer', 'firstName lastName')
             .populate('vehicle', 'model plateNumber');
 
         res.status(200).json(bills);
