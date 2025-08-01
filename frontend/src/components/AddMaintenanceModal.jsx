@@ -37,7 +37,7 @@ export default function AddMaintenanceModal({ visible, onClose, onSave, vehicles
             const created = res.data;
             console.log("✅ Created record with ID:", created._id);
 
-            onSave(created); // 👈 ارسال رکورد کامل به لیست
+            onSave(created);
 
             setForm({
                 vehicleId: "",

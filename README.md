@@ -78,3 +78,6 @@ JWT_SECRET=your_jwt_secret
 
 Fatemeh Gheysari  
 [GitHub Profile](https://github.com/fatemeGheysari)
+
+## To Do List
+- **bill issue**: user can add service and see the total price 
