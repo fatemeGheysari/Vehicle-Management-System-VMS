@@ -1,6 +1,6 @@
 import express from 'express';
 import { createBill, getAllBills } from '../controllers/billController.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
