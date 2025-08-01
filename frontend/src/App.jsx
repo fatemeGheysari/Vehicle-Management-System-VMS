@@ -5,6 +5,7 @@ import AddVehicle from "./pages/AddVehicle";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MaintenanceList from "./pages/MaintenanceList";
 import InvoiceList from './pages/InvoiceList';
+import AddBill from './pages/AddBill';
 
 function App() {
   return (
@@ -41,6 +42,12 @@ function App() {
             <InvoiceList />
           </ProtectedRoute>
         }
+      />
+      <Route path="/add-bill"
+        element={
+          <ProtectedRoute>
+            <AddBill />
+          </ProtectedRoute>}
       />
     </Routes>
 
