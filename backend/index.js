@@ -8,6 +8,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import categoryRoutes from './src/routes/categoryRoutes.js';
 import maintenanceRoutes from './src/routes/maintenanceRoutes.js';
 import customerRoutes from './src/routes/customerRoutes.js';
+import billRoutes from './src/routes/billRoutes.js';
 
 import './src/models/index.js';
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/bills', billRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

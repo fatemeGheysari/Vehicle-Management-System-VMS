@@ -101,6 +101,7 @@ export default function Vehicles() {
           <button onClick={() => navigate("/vehicles/new")} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Vehicle</button>
           <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
           <button onClick={() => navigate("/maintenance")} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"> 🛠️ Maintenance </button>
+          <button onClick={() => navigate('/invoices')} className="bg-purple-500 text-white px-4 py-2 rounded" > 📄 Invoices </button>
         </div>
       </div>
 

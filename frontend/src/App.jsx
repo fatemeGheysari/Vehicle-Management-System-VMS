@@ -4,6 +4,9 @@ import Vehicles from "./pages/Vehicles";
 import AddVehicle from "./pages/AddVehicle";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MaintenanceList from "./pages/MaintenanceList";
+import InvoiceList from './pages/InvoiceList';
+import AddBill from './pages/AddBill';
+import EditBill from './pages/EditBill';
 
 function App() {
   return (
@@ -32,6 +35,26 @@ function App() {
             <MaintenanceList />
           </ProtectedRoute>
         }
+      />
+      <Route
+        path="/invoices"
+        element={
+          <ProtectedRoute>
+            <InvoiceList />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/add-bill"
+        element={
+          <ProtectedRoute>
+            <AddBill />
+          </ProtectedRoute>}
+      />
+      <Route path="/edit-bill/:id"
+        element={
+          <ProtectedRoute>
+            <EditBill />
+          </ProtectedRoute>}
       />
     </Routes>
 
