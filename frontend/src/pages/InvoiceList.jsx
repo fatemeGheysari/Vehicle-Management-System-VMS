@@ -39,6 +39,19 @@ const InvoiceList = () => {
         return matchCustomer && matchVehicle;
     });
 
+    const handleDelete = async (id) => {
+        const confirmed = window.confirm('Are you sure you want to delete this invoice?');
+        if (!confirmed) return;
+
+        try {
+            await axiosInstance.delete(`/api/bills/${id}`);
+            toast.success('Invoice deleted successfully');
+            setBills((prev) => prev.filter((b) => b._id !== id));
+        } catch (err) {
+            toast.error('Failed to delete invoice');
+        }
+    };
+
     return (
         <div className="p-6 max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold text-center mb-10"> 📄 Invoice List</h1>
