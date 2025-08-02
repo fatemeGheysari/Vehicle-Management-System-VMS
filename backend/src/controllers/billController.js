@@ -36,3 +36,40 @@ export const getAllBills = async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch bills' });
     }
 };
+
+export const getBillById = async (req, res) => {
+    try {
+        const bill = await Bill.findById(req.params.id)
+            .populate('customer')
+            .populate('vehicle');
+
+        if (!bill) {
+            return res.status(404).json({ message: 'Bill not found' });
+        }
+
+        res.json(bill);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const updateBill = async (req, res) => {
+    try {
+        const { customer, vehicle, services, totalPrice } = req.body;
+
+        const updatedBill = await Bill.findByIdAndUpdate(
+            req.params.id,
+            { customer, vehicle, services, totalPrice },
+            { new: true }
+        );
+
+        if (!updatedBill) {
+            return res.status(404).json({ message: 'Bill not found' });
+        }
+
+        res.json(updatedBill);
+    } catch (err) {
+        console.error('Update Bill Error:', err);
+        res.status(500).json({ message: 'Failed to update bill' });
+    }
+};

@@ -1,12 +1,12 @@
 {
-  "name": "vms (vehicle-management-system)",
+  "name": "vms-vehicle-management-system",
   "version": "1.0.0",
   "type": "module",
   "description": "A full-stack web application for managing vehicles, service history, and spare parts inventory — ideal for garages, rental agencies, or fleet managers. This project showcases my skills in full-stack development, object-oriented programming, and RESTful API design.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +19,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
     "mongoose": "^8.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

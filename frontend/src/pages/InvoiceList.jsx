@@ -96,40 +96,60 @@ const InvoiceList = () => {
             ) : (
                 <div className="space-y-4">
                     {filteredBills.map((bill) => (
+
                         <div
                             key={bill._id}
-                            className="border p-4 rounded shadow-sm bg-white hover:shadow-md transition"
+                            className="border p-4 rounded shadow-sm bg-white hover:shadow-md transition flex justify-between items-center"
                         >
-                            <div className="font-semibold">
-                                🧾 Customer:{' '}
-                                {bill.customer
-                                    ? `${bill.customer.firstName} ${bill.customer.lastName}`
-                                    : 'Unknown'}
-                            </div>
-                            <div>
-                                🚗 Vehicle: {bill.vehicle?.model || 'N/A'} -{' '}
-                                {bill.vehicle?.plateNumber || ''}
-                            </div>
-                            <div>
-                                💰 Total Price: {bill.totalPrice.toLocaleString()} €
-                            </div>
-                            <div>
-                                📅 Date: {new Date(bill.date).toLocaleDateString()}
+
+                            {/* Invoice information - left */}                           <div>
+                                <div className="font-semibold">
+                                    🧾 Customer:{' '}
+                                    {bill.customer
+                                        ? `${bill.customer.firstName} ${bill.customer.lastName}`
+                                        : 'Unknown'}
+                                </div>
+                                <div>
+                                    🚗 Vehicle: {bill.vehicle?.model || 'N/A'} - {bill.vehicle?.plateNumber || ''}
+                                </div>
+                                <div>
+                                    💰 Total Price: {bill.totalPrice.toLocaleString()} €
+                                </div>
+                                <div>
+                                    📅 Date: {new Date(bill.date).toLocaleDateString()}
+                                </div>
+
+                                <details className="mt-2">
+                                    <summary className="cursor-pointer text-blue-600">View Services</summary>
+                                    <ul className="list-disc pl-5 mt-2">
+                                        {bill.services.map((srv, idx) => (
+                                            <li key={idx}>
+                                                {srv.description} — {srv.price.toLocaleString()} €
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </details>
                             </div>
 
-                            <details className="mt-2">
-                                <summary className="cursor-pointer text-blue-600">
-                                    View Services
-                                </summary>
-                                <ul className="list-disc pl-5 mt-2">
-                                    {bill.services.map((srv, idx) => (
-                                        <li key={idx}>
-                                            {srv.description} — {srv.price.toLocaleString()} €
-                                        </li>
-                                    ))}
-                                </ul>
-                            </details>
+                            {/* Buttons - Right */}
+                            <div className="flex flex-col items-end gap-2">
+                                <button
+                                    onClick={() => navigate(`/edit-bill/${bill._id}`)}
+                                    className="bg-yellow-400 text-black px-5 py-2 rounded flex items-center gap-1 hover:bg-yellow-500 transition"
+                                >
+                                    ✏️ Edit
+                                </button>
+
+                                <button
+                                    onClick={() => handleDelete(bill._id)}
+                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded transition"
+                                >
+                                    🗑️ Delete
+                                </button>
+                            </div>
                         </div>
+
+
                     ))}
                 </div>
             )}
