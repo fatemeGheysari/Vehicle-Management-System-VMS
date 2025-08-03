@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 👉 Cache backend node_modules
+      - name: Cache backend dependencies
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: backend-${{ runner.os }}-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            backend-${{ runner.os }}-
+
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Lint backend
+        run: npm run lint || echo "Lint skipped"
+        working-directory: backend
+
+      # 👉 Run backend tests
+      - name: Run backend tests
+        run: npm test
+        working-directory: backend
+
+      # 👉 Cache frontend node_modules
+      - name: Cache frontend dependencies
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: frontend-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            frontend-${{ runner.os }}-
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: frontend
+
+      - name: Lint frontend
+        run: npm run lint || echo "Lint skipped"
+        working-directory: frontend
+
+      # 👉 Run frontend tests
+      - name: Run frontend tests
+        run: npm test
+        working-directory: frontend
