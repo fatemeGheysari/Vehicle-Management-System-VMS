@@ -13,7 +13,6 @@ import billRoutes from './src/routes/billRoutes.js';
 import './src/models/index.js';
 
 const app = express();
-connectDB();
 
 // Middlewares
 app.use(cors());
@@ -27,6 +26,13 @@ app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/bills', billRoutes);
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+// Only connect to DB and listen when NOT testing
+if (process.env.NODE_ENV !== 'test') {
+    connectDB();
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+}
+
+export default app;

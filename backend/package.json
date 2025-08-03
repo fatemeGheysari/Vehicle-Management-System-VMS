@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +22,9 @@
     "mongoose": "^8.16.2"
   },
   "devDependencies": {
+    "cross-env": "^10.0.0",
     "jest": "^30.0.5",
+    "mongodb-memory-server": "^10.2.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4"
   }
