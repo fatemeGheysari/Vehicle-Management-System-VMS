@@ -33,7 +33,7 @@ const AddBill = () => {
                 setCustomers(custRes.data);
                 setVehicles(vehRes.data);
             } catch (err) {
-                toast.error('Failed to load customers or vehicles');
+                toast.error('Failed to load customers or vehicles: ' + err.message);
             }
         };
 
@@ -61,7 +61,7 @@ const AddBill = () => {
             reset();
             navigate('/invoices');
         } catch (err) {
-            toast.error('Failed to submit invoice');
+            toast.error('Failed to submit invoice: ' + err.message);
         }
     };
 

@@ -24,7 +24,7 @@ const InvoiceList = () => {
                 setCustomers(custRes.data);
                 setVehicles(vehRes.data);
             } catch (error) {
-                toast.error('Failed to load invoices or filter data');
+                toast.error(`Failed to load invoices: ${error.message}`);
             } finally {
                 setLoading(false);
             }
@@ -48,7 +48,7 @@ const InvoiceList = () => {
             toast.success('Invoice deleted successfully');
             setBills((prev) => prev.filter((b) => b._id !== id));
         } catch (err) {
-            toast.error('Failed to delete invoice');
+            toast.error(`Failed to delete invoice: ${err.message}`);
         }
     };
 

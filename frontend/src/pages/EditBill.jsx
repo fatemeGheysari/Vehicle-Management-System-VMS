@@ -42,7 +42,7 @@ const EditBill = () => {
                 setCustomers(customersRes.data);
                 setVehicles(vehiclesRes.data);
             } catch (err) {
-                toast.error('Failed to fetch bill data');
+                toast.error('Failed to fetch bill data: ' + err.message);
             } finally {
                 setLoading(false);
             }
@@ -70,7 +70,7 @@ const EditBill = () => {
             toast.success('Invoice updated successfully');
             navigate('/invoices');
         } catch (err) {
-            toast.error('Update failed');
+            toast.error('Update failed: ' + err.message);
         }
     };
 
