@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/useAuth";
 
@@ -9,7 +9,7 @@ function Login() {
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
-  const { login } = useAuth(); // get login method from context
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,16 +20,13 @@ function Login() {
         passwordHash,
       });
 
-      // ✅ Store whole auth object in context and localStorage
       const authData = {
         token: res.data.token,
         user: res.data.user,
       };
 
       localStorage.setItem("auth", JSON.stringify(authData));
-
       login(authData);
-
       setMessage("✅ Login successful!");
       navigate("/vehicles");
     } catch (err) {
@@ -37,33 +34,58 @@ function Login() {
     }
   };
 
-
   return (
-    <div style={{ padding: "2rem" }}>
-      <div className="bg-green-500 text-white p-4">Tailwind is working ✅</div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white shadow-md rounded p-6 w-full max-w-sm text-center">
+        {/* 🔰 Logo Section */}
+        <div className="mb-6">
+          <img
+            src="/logo.png"
+            alt="App Logo"
+            className="mx-auto w-16 h-16"
+          />
+          <h2 className="text-2xl font-bold mt-2">Login</h2>
+        </div>
+
+        {/* 🔐 Form */}
+        <form onSubmit={handleLogin} className="space-y-4 text-left">
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className="w-full border border-gray-300 px-3 py-2 rounded"
           />
-        </div>
-        <div>
           <input
             type="password"
             placeholder="Password"
             value={passwordHash}
             onChange={(e) => setPasswordHash(e.target.value)}
             required
+            className="w-full border border-gray-300 px-3 py-2 rounded"
           />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p>{message}</p>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            Login
+          </button>
+        </form>
+
+        {/* ✅ Message */}
+        {message && (
+          <p className="mt-4 text-sm text-red-500">{message}</p>
+        )}
+
+        {/* 📌 Signup link */}
+        <p className="mt-6 text-sm">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Sign up here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
