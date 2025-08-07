@@ -1,20 +1,29 @@
 import mongoose from "mongoose";
 
-const maintenanceRecordSchema = new mongoose.Schema({
+const maintenanceSchema = new mongoose.Schema({
   vehicleId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vehicle",
-    required: true,
+    required: true
   },
-  serviceDate: { type: Date, required: true },
-  description: { type: String, required: true },
-  mileage: { type: Number, required: true },
-  cost: { type: Number, required: true },
-  partsUsed: { type: String },
+  serviceDate: {
+    type: Date,
+    required: true
+  },
+  services: [
+    {
+      description: { type: String, required: true },
+      cost: { type: Number, required: true }
+    }
+  ],
+  partsUsed: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Part"
+    }
+  ]
 }, {
-  timestamps: true,
-  toJSON: { virtuals: true }
+  timestamps: true
 });
 
-const MaintenanceRecord = mongoose.model("MaintenanceRecord", maintenanceRecordSchema);
-export default MaintenanceRecord;
+export default mongoose.model("MaintenanceRecord", maintenanceSchema);

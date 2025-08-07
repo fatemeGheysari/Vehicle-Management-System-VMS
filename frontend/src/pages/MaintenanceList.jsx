@@ -16,7 +16,6 @@ export default function MaintenanceList() {
     const fetchRecords = async () => {
         try {
             const res = await axios.get("/api/maintenance");
-            console.log("Fetched records:", res.data);
             setRecords(res.data);
         } catch (err) {
             toast.error("Failed to fetch maintenance records");
@@ -71,9 +70,6 @@ export default function MaintenanceList() {
 
             <ul className="space-y-4">
                 {records.map(record => {
-                    console.log("Record ID:", record._id);
-                    console.log("Full Record:", record);
-
                     const isOpen = expandedId === record._id;
                     const vehicle = record.vehicleId;
 
@@ -100,10 +96,24 @@ export default function MaintenanceList() {
                                     >
                                         <p><strong>🆔 Plate:</strong> {vehicle.plateNumber}</p>
                                         <p><strong>📅 Date:</strong> {new Date(record.serviceDate).toLocaleDateString()}</p>
-                                        <p><strong>📝 Description:</strong> {record.description}</p>
-                                        <p><strong>📍 Mileage:</strong> {record.mileage} km</p>
-                                        <p><strong>💰 Cost:</strong> €{record.cost}</p>
-                                        <p><strong>🔧 Parts Used:</strong> {record.partsUsed || "None"}</p>
+
+                                        <p><strong>🛠️ Services:</strong></p>
+                                        <ul className="list-disc pl-5 mt-1">
+                                            {record.services.map((srv, idx) => (
+                                                <li key={idx}>{srv.description} — €{srv.cost}</li>
+                                            ))}
+                                        </ul>
+
+                                        <p><strong>🔧 Parts Used:</strong></p>
+                                        <ul className="list-disc pl-5 mt-1">
+                                            {record.partsUsed && record.partsUsed.length > 0 ? (
+                                                record.partsUsed.map((part, i) => (
+                                                    <li key={i}>{part.name || "Unknown part"}</li>
+                                                ))
+                                            ) : (
+                                                <li>None</li>
+                                            )}
+                                        </ul>
 
                                         <div className="flex gap-3 mt-4">
                                             <button
@@ -119,7 +129,6 @@ export default function MaintenanceList() {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-
                         </li>
                     );
                 })}

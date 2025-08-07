@@ -7,6 +7,7 @@ import MaintenanceList from "./pages/MaintenanceList";
 import InvoiceList from './pages/InvoiceList';
 import AddBill from './pages/AddBill';
 import EditBill from './pages/EditBill';
+import InvoicesPage from './pages/InvoicesPage';
 
 function App() {
   return (
@@ -44,6 +45,15 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/InvoicesPage"
+        element={
+          <ProtectedRoute>
+            <InvoicesPage />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="/add-bill"
         element={
           <ProtectedRoute>
@@ -57,6 +67,7 @@ function App() {
           </ProtectedRoute>}
       />
     </Routes>
+
 
   );
 }

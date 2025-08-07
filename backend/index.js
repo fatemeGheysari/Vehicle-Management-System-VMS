@@ -9,6 +9,8 @@ import categoryRoutes from './src/routes/categoryRoutes.js';
 import maintenanceRoutes from './src/routes/maintenanceRoutes.js';
 import customerRoutes from './src/routes/customerRoutes.js';
 import billRoutes from './src/routes/billRoutes.js';
+import invoiceRoutes from './src/routes/invoiceRoutes.js';
+import partRoutes from './src/routes/partRoutes.js';
 
 import './src/models/index.js';
 
@@ -25,7 +27,8 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/bills', billRoutes);
-
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/parts', partRoutes);
 
 // Only connect to DB and listen when NOT testing
 if (process.env.NODE_ENV !== 'test') {
