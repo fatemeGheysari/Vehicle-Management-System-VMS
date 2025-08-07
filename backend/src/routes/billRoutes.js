@@ -4,6 +4,7 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { getBillById } from '../controllers/billController.js';
 import { updateBill } from '../controllers/billController.js';
 import { deleteBill } from '../controllers/billController.js';
+import { getBillByMaintenanceId } from '../controllers/billController.js';
 
 const router = express.Router();
 
@@ -12,5 +13,6 @@ router.get('/', authMiddleware, getAllBills);
 router.get('/:id', getBillById);
 router.put('/:id', authMiddleware, updateBill);
 router.delete('/:id', authMiddleware, deleteBill);
+router.get("/by-maintenance/:maintenanceId", getBillByMaintenanceId);
 
 export default router;

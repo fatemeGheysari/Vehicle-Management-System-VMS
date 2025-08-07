@@ -85,3 +85,25 @@ export const deleteBill = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// GET /api/bills/by-maintenance/:maintenanceId
+export const getBillByMaintenanceId = async (req, res) => {
+    try {
+        const bill = await Bill.findOne({ maintenanceId: req.params.maintenanceId })
+            .populate("vehicle")
+            .populate("customer")
+            .populate({
+                path: "maintenanceId",
+                populate: { path: "partsUsed" }
+            });
+
+        if (!bill) {
+            return res.status(404).json({ message: "Invoice not found for this maintenance" });
+        }
+
+        res.json(bill);
+    } catch (error) {
+        console.error("❌ Error fetching bill by maintenanceId:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};

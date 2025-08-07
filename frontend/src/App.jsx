@@ -8,6 +8,7 @@ import InvoiceList from './pages/InvoiceList';
 import AddBill from './pages/AddBill';
 import EditBill from './pages/EditBill';
 import InvoicesPage from './pages/InvoicesPage';
+import EditMaintenance from "./pages/EditMaintenance";
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
           <ProtectedRoute>
             <EditBill />
           </ProtectedRoute>}
+      />
+      <Route
+        path="/edit-maintenance/:id"
+        element={
+          <ProtectedRoute>
+            <EditMaintenance />
+          </ProtectedRoute>
+        }
       />
     </Routes>
 

@@ -12,6 +12,7 @@ import billRoutes from './src/routes/billRoutes.js';
 import invoiceRoutes from './src/routes/invoiceRoutes.js';
 import partRoutes from './src/routes/partRoutes.js';
 
+
 import './src/models/index.js';
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/parts', partRoutes);
+
 
 // Only connect to DB and listen when NOT testing
 if (process.env.NODE_ENV !== 'test') {

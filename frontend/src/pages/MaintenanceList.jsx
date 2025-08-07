@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import ConfirmModal from "../components/ConfirmModal";
 import AddMaintenanceModal from "../components/AddMaintenanceModal";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import InvoiceModal from "../components/InvoiceModal";
 
 export default function MaintenanceList() {
     const [records, setRecords] = useState([]);
@@ -12,6 +14,9 @@ export default function MaintenanceList() {
     const [showModal, setShowModal] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState(null);
+    const navigate = useNavigate();
+    const [invoiceModalVisible, setInvoiceModalVisible] = useState(false);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
 
     const fetchRecords = async () => {
         try {
@@ -125,6 +130,29 @@ export default function MaintenanceList() {
                                             >
                                                 🗑️ Delete
                                             </button>
+                                            <button
+                                                onClick={() => navigate(`/edit-maintenance/${record._id}`)}
+                                                className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded"
+                                            >
+                                                ✏️ Edit
+                                            </button>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await axios.get(`/api/bills/by-maintenance/${record._id}`);
+                                                        setSelectedInvoice(res.data);
+                                                        setInvoiceModalVisible(true);
+                                                    } catch (err) {
+                                                        toast.error("No invoice found for this maintenance.");
+                                                    }
+                                                }}
+                                                className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded"
+                                            >
+                                                📄 View Invoice
+                                            </button>
+
+
+
                                         </div>
                                     </motion.div>
                                 )}
@@ -150,6 +178,13 @@ export default function MaintenanceList() {
                 onConfirm={handleDelete}
                 onCancel={() => setConfirmVisible(false)}
             />
+            {/* Invoice Modal */}
+            <InvoiceModal
+                visible={invoiceModalVisible}
+                invoice={selectedInvoice}
+                onClose={() => setInvoiceModalVisible(false)}
+            />
+
         </div>
     );
 }

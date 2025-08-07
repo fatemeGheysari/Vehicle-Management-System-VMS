@@ -3,7 +3,9 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 import {
     createMaintenanceRecord,
     getAllMaintenanceRecords,
-    deleteMaintenance
+    deleteMaintenance,
+    getMaintenanceById,
+    updateMaintenance
 } from '../controllers/maintenanceController.js';
 
 import Maintenance from '../models/MaintenanceRecord.js';
@@ -26,6 +28,8 @@ router.use(authMiddleware);
 // Main routes
 router.post('/', createMaintenanceRecord);
 router.get('/', getAllMaintenanceRecords);
+router.get("/:id", getMaintenanceById);
+router.put("/:id", updateMaintenance);
 router.delete('/:id', deleteMaintenance);
 
 export default router;
