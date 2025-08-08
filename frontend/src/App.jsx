@@ -4,11 +4,12 @@ import Vehicles from "./pages/Vehicles";
 import AddVehicle from "./pages/AddVehicle";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MaintenanceList from "./pages/MaintenanceList";
-import InvoiceList from './pages/InvoiceList';
-import AddBill from './pages/AddBill';
-import EditBill from './pages/EditBill';
-import InvoicesPage from './pages/InvoicesPage';
+import InvoiceList from './pages/invoices/InvoiceList';
+import AddBill from './pages/invoices/AddBill';
+import EditBill from './pages/invoices/EditBill';
+import InvoicesPage from './pages/invoices/InvoicesPage';
 import EditMaintenance from "./pages/EditMaintenance";
+import ArchivedInvoices from "./pages/invoices/ArchivedInvoices";
 
 function App() {
   return (
@@ -72,6 +73,14 @@ function App() {
         element={
           <ProtectedRoute>
             <EditMaintenance />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/invoices/archived"
+        element={
+          <ProtectedRoute>
+            <ArchivedInvoices />
           </ProtectedRoute>
         }
       />

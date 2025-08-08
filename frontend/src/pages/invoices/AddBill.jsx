@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from '../../utils/axiosInstance';
 import toast from 'react-hot-toast';
 
 const AddBill = () => {

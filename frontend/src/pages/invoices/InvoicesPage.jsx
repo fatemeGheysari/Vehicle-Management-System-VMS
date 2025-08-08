@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../utils/axiosInstance";
+import axios from "../../utils/axiosInstance";
 import toast from "react-hot-toast";
 
 export default function InvoicesPage() {

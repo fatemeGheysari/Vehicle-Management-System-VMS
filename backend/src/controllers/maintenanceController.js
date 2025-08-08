@@ -56,12 +56,21 @@ export const createMaintenanceRecord = async (req, res) => {
 
 export const deleteMaintenance = async (req, res) => {
   try {
-    const record = await MaintenanceRecord.findByIdAndDelete(req.params.id);
-    if (!record) {
-      return res.status(404).json({ message: "Record not found" });
+    const deleted = await MaintenanceRecord.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Maintenance record not found" });
     }
-    res.json({ message: "Deleted successfully" });
+
+    // ✅ Archive the related invoice
+    await Bill.findOneAndUpdate(
+      { maintenanceId: req.params.id },
+      { archived: true }
+    );
+    console.log("🧾 Archived related invoice for maintenance:", req.params.id);
+    res.json({ message: "Maintenance deleted, and related invoice archived" });
   } catch (error) {
+    console.error("❌ Error deleting maintenance:", error);
     res.status(500).json({ message: error.message });
   }
 };

@@ -26,7 +26,7 @@ export const createBill = async (req, res) => {
 
 export const getAllBills = async (req, res) => {
     try {
-        const bills = await Bill.find()
+        const bills = await Bill.find({ archived: false })
             .populate('customer', 'firstName lastName')
             .populate('vehicle', 'model plateNumber');
 
@@ -89,7 +89,7 @@ export const deleteBill = async (req, res) => {
 // GET /api/bills/by-maintenance/:maintenanceId
 export const getBillByMaintenanceId = async (req, res) => {
     try {
-        const bill = await Bill.findOne({ maintenanceId: req.params.maintenanceId })
+        const bill = await Bill.findOne({ maintenanceId: req.params.maintenanceId, archived: false })
             .populate("vehicle")
             .populate("customer")
             .populate({
@@ -107,3 +107,25 @@ export const getBillByMaintenanceId = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+
+export const getArchivedBills = async (req, res) => {
+    try {
+        console.log("📥 Request received for archived bills");
+
+        const bills = await Bill.find({ archived: true })
+            .populate("vehicle", "model plateNumber")
+            .populate("customer", "firstName lastName")
+            .populate({
+                path: "maintenanceId",
+                populate: { path: "partsUsed" }
+            });
+
+        console.log("✅ Bills found:", bills);
+
+        res.json(bills);
+    } catch (err) {
+        console.error("❌ Error fetching archived bills:", err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
