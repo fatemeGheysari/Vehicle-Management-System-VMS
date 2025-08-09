@@ -1,6 +1,6 @@
 // 📁 src/__tests__/InvoiceList.test.jsx
 import { render, screen, waitFor } from '@testing-library/react';
-import InvoiceList from '../pages/InvoiceList';
+import InvoiceList from '../pages/invoices/InvoiceList';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import axiosInstance from '../utils/axiosInstance';
