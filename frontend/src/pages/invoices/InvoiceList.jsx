@@ -3,6 +3,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
+
 const InvoiceList = () => {
     const [bills, setBills] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -163,7 +164,16 @@ const InvoiceList = () => {
 
                         <p className="mt-4 font-bold text-right text-lg">💰 Total: €{printBill.totalPrice.toLocaleString()}</p>
 
-                        <div className="mt-6 flex justify-end">
+                        {/* Action Buttons */}
+                        <div className="flex justify-between gap-3 mt-6 no-print">
+                            <button
+                                type="button"
+                                onClick={() => setPrintBill(null)}
+                                className="bg-gray-300 text-gray-800 px-5 py-2 rounded hover:bg-gray-400"
+                            >
+                                ❌ Cancel
+                            </button>
+
                             <button
                                 onClick={() => {
                                     window.print();
@@ -174,6 +184,7 @@ const InvoiceList = () => {
                                 🖨️ Print Now
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}
