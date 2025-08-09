@@ -122,15 +122,6 @@ export default function MaintenanceList() {
 
                                         <div className="flex gap-3 mt-4">
                                             <button
-                                                onClick={() => {
-                                                    setRecordToDelete(record);
-                                                    setConfirmVisible(true);
-                                                }}
-                                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                                            >
-                                                🗑️ Delete
-                                            </button>
-                                            <button
                                                 onClick={() => navigate(`/edit-maintenance/${record._id}`)}
                                                 className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded"
                                             >

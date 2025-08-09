@@ -27,10 +27,10 @@ export default function ArchivedInvoices() {
                 <table className="min-w-full text-sm border rounded shadow">
                     <thead className="bg-gray-100">
                         <tr>
-                            <th className="p-3">Customer</th>
-                            <th className="p-3">Vehicle</th>
-                            <th className="p-3">Date</th>
-                            <th className="p-3">Total (€)</th>
+                            <th className="text-left px-4 py-2">Customer</th>
+                            <th className="text-left px-4 py-2">Vehicle</th>
+                            <th className="text-left px-4 py-2">Date</th>
+                            <th className="text-left px-4 py-2">Total (€)</th>
                         </tr>
                     </thead>
                     <tbody>

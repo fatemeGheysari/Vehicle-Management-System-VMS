@@ -7,6 +7,7 @@ import {
     deleteBill,
     getBillByMaintenanceId,
     getArchivedBills,
+    archiveBill,
 } from '../controllers/billController.js';
 
 import { authMiddleware } from '../middlewares/authMiddleware.js';
@@ -23,5 +24,6 @@ router.get("/by-maintenance/:maintenanceId", getBillByMaintenanceId);
 router.get('/:id', getBillById);
 router.put('/:id', authMiddleware, updateBill);
 router.delete('/:id', authMiddleware, deleteBill);
+router.patch('/:id/archive', authMiddleware, archiveBill);
 
 export default router;

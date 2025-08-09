@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import toast from 'react-hot-toast';
+import { useParams } from "react-router-dom";
 
 const AddBill = () => {
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ const AddBill = () => {
         defaultValues: {
             customer: '',
             vehicle: '',
+            date: new Date().toISOString().split("T")[0],
             services: [{ description: '', price: 0 }],
         },
     });
@@ -22,16 +24,21 @@ const AddBill = () => {
 
     const [customers, setCustomers] = useState([]);
     const [vehicles, setVehicles] = useState([]);
+    const { maintenanceId } = useParams();
+    const [availableParts, setAvailableParts] = useState([]);
+    const [form, setForm] = useState({ partsUsed: [] });
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [custRes, vehRes] = await Promise.all([
+                const [custRes, vehRes, partsRes] = await Promise.all([
                     axiosInstance.get('/api/customers'),
                     axiosInstance.get('/api/vehicles'),
+                    axiosInstance.get('/api/parts'),
                 ]);
                 setCustomers(custRes.data);
                 setVehicles(vehRes.data);
+                setAvailableParts(partsRes.data);
             } catch (err) {
                 toast.error('Failed to load customers or vehicles: ' + err.message);
             }
@@ -53,8 +60,10 @@ const AddBill = () => {
             await axiosInstance.post('/api/bills', {
                 customer: data.customer,
                 vehicle: data.vehicle,
+                date: data.date,
                 services: cleanedServices,
                 totalPrice,
+                maintenanceId,
             });
 
             toast.success('Invoice created successfully!');
@@ -95,10 +104,21 @@ const AddBill = () => {
                         ))}
                     </select>
                 </div>
-
-                {/* Services */}
+                {/* Date */}
                 <div>
-                    <label className="block font-semibold mb-2">Services:</label>
+                    <label className="block font-semibold mb-1">Date:</label>
+                    <input
+                        type="date"
+                        {...register("date", { required: true })}
+                        className="w-full border p-2 rounded"
+                    />
+                </div>
+
+
+                {/* Services Section */}
+                <div>
+                    <h4 className="font-semibold mb-2">Services:</h4>
+
                     {fields.map((item, index) => (
                         <div key={item.id} className="flex gap-2 mb-2">
                             <input
@@ -126,11 +146,34 @@ const AddBill = () => {
                     <button
                         type="button"
                         onClick={() => append({ description: '', price: 0 })}
-                        className="bg-blue-500 text-white px-4 py-1 rounded"
-                    >
-                        + Add Service
-                    </button>
+                        className="text-blue-600 hover:underline mt-1">+ Add Service</button>
                 </div>
+                {/* Parts Section */}
+                <div>
+                    <h4 className="font-semibold mb-2">Parts Used:</h4>
+                    <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded">
+                        {availableParts.map(part => (
+                            <label key={part._id} className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="checkbox"
+                                    checked={form.partsUsed.includes(part._id)}
+                                    onChange={() => {
+                                        const exists = form.partsUsed.includes(part._id);
+                                        const updated = exists
+                                            ? form.partsUsed.filter(id => id !== part._id)
+                                            : [...form.partsUsed, part._id];
+                                        setForm(prev => ({ ...prev, partsUsed: updated }));
+                                    }}
+                                />
+                                <span>{part.name}</span>
+                            </label>
+                        ))}
+                    </div>
+
+                </div>
+
+
+
 
                 {/* Total */}
                 <div className="font-bold text-lg">

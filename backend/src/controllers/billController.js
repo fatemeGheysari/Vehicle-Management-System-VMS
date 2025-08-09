@@ -2,7 +2,7 @@ import Bill from '../models/Bill.js';
 
 export const createBill = async (req, res) => {
     try {
-        const { customer, vehicle, services } = req.body;
+        const { customer, vehicle, services, date, maintenanceId } = req.body;
 
         if (!services || services.length === 0) {
             return res.status(400).json({ message: 'No services provided' });
@@ -15,20 +15,27 @@ export const createBill = async (req, res) => {
             vehicle,
             services,
             totalPrice,
+            date,
+            maintenanceId
         });
 
         res.status(201).json(newBill);
     } catch (err) {
-        console.error('Create Bill Error:', err);
-        res.status(500).json({ message: 'Failed to create bill' });
+        console.error('❌ Create Bill Error:', err);
+        res.status(500).json({ message: 'Failed to create bill', error: err.message });
     }
 };
+
 
 export const getAllBills = async (req, res) => {
     try {
         const bills = await Bill.find({ archived: false })
             .populate('customer', 'firstName lastName')
-            .populate('vehicle', 'model plateNumber');
+            .populate('vehicle', 'model plateNumber')
+            .populate({
+                path: 'maintenanceId',
+                populate: { path: 'partsUsed' }
+            });
 
         res.status(200).json(bills);
     } catch (err) {
@@ -129,3 +136,14 @@ export const getArchivedBills = async (req, res) => {
     }
 };
 
+// PATCH /api/bills/:id/archive
+export const archiveBill = async (req, res) => {
+    try {
+        const updated = await Bill.findByIdAndUpdate(req.params.id, { archived: true }, { new: true });
+        if (!updated) return res.status(404).json({ message: "Bill not found" });
+        res.json(updated);
+    } catch (err) {
+        console.error("❌ Archive Bill Error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+};

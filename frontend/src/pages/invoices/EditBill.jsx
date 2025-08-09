@@ -4,17 +4,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import toast from 'react-hot-toast';
 
+
 const EditBill = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [customers, setCustomers] = useState([]);
     const [vehicles, setVehicles] = useState([]);
+    const [availableParts, setAvailableParts] = useState([]);
+    const [form, setForm] = useState({ partsUsed: [] });
 
     const { register, control, handleSubmit, reset } = useForm({
         defaultValues: {
             customer: '',
             vehicle: '',
+            maintenanceId: '',
             services: [],
         },
     });
@@ -27,20 +31,24 @@ const EditBill = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [billRes, customersRes, vehiclesRes] = await Promise.all([
+                const [billRes, customersRes, vehiclesRes, partsRes] = await Promise.all([
                     axiosInstance.get(`/api/bills/${id}`),
                     axiosInstance.get('/api/customers'),
                     axiosInstance.get('/api/vehicles'),
+                    axiosInstance.get('/api/parts'),
                 ]);
 
                 reset({
                     customer: billRes.data.customer._id,
                     vehicle: billRes.data.vehicle._id,
                     services: billRes.data.services,
+                    maintenanceId: billRes.data.maintenanceId?._id || '',
                 });
 
                 setCustomers(customersRes.data);
                 setVehicles(vehiclesRes.data);
+                setAvailableParts(partsRes.data);
+                setForm({ partsUsed: billRes.data.partsUsed || [] });
             } catch (err) {
                 toast.error('Failed to fetch bill data: ' + err.message);
             } finally {
@@ -55,6 +63,7 @@ const EditBill = () => {
         const cleanedServices = data.services.map((s) => ({
             description: s.description,
             price: parseFloat(s.price.toString().replace(',', '.')) || 0,
+
         }));
 
         const totalPrice = cleanedServices.reduce((sum, s) => sum + s.price, 0);
@@ -63,8 +72,10 @@ const EditBill = () => {
             await axiosInstance.put(`/api/bills/${id}`, {
                 customer: data.customer,
                 vehicle: data.vehicle,
+                maintenanceId: data.maintenanceId,
                 services: cleanedServices,
                 totalPrice,
+                partsUsed: form.partsUsed,
             });
 
             toast.success('Invoice updated successfully');
@@ -142,6 +153,29 @@ const EditBill = () => {
                         </button>
                     </div>
                 </div>
+                {/* Parts Section */}
+                <div>
+                    <label className="block font-medium mb-2">Parts Used</label>
+                    <div className="border p-3 rounded max-h-40 overflow-y-auto">
+                        {availableParts.map((part) => (
+                            <label key={part._id} className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="checkbox"
+                                    checked={form.partsUsed.includes(part._id)}
+                                    onChange={() => {
+                                        const exists = form.partsUsed.includes(part._id);
+                                        const updated = exists
+                                            ? form.partsUsed.filter(id => id !== part._id)
+                                            : [...form.partsUsed, part._id];
+                                        setForm(prev => ({ ...prev, partsUsed: updated }));
+                                    }}
+                                />
+                                <span>{part.name}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
 
                 {/* Action Buttons */}
                 <div className="flex justify-between mt-6">

@@ -41,16 +41,16 @@ const InvoiceList = () => {
         return matchCustomer && matchVehicle;
     });
 
-    const handleDelete = async (id) => {
-        const confirmed = window.confirm('Are you sure you want to delete this invoice?');
+    const handleArchive = async (id) => {
+        const confirmed = window.confirm('Are you sure you want to archive this invoice?');
         if (!confirmed) return;
 
         try {
-            await axiosInstance.delete(`/api/bills/${id}`);
-            toast.success('Invoice deleted successfully');
+            await axiosInstance.patch(`/api/bills/${id}/archive`);
+            toast.success('Invoice archived successfully');
             setBills((prev) => prev.filter((b) => b._id !== id));
         } catch (err) {
-            toast.error(`Failed to delete invoice: ${err.message}`);
+            toast.error(`Failed to archive invoice: ${err.message}`);
         }
     };
 
@@ -105,11 +105,24 @@ const InvoiceList = () => {
                                         ))}
                                     </ul>
                                 </details>
+                                <details className="mt-2">
+                                    <summary className="cursor-pointer text-blue-600">Parts Used</summary>
+                                    <ul className="list-disc pl-5 mt-2">
+                                        {bill.maintenanceId?.partsUsed?.length > 0 ? (
+                                            bill.maintenanceId.partsUsed.map((part, idx) => (
+                                                <li key={idx}>{part.name}</li>
+                                            ))
+                                        ) : (
+                                            <li className="text-gray-500">No parts used</li>
+                                        )}
+                                    </ul>
+                                </details>
                             </div>
+
 
                             <div className="flex flex-col items-end gap-2">
                                 <button onClick={() => navigate(`/edit-bill/${bill._id}`)} className="bg-yellow-400 text-black px-5 py-2 rounded hover:bg-yellow-500"> ✏️ Edit</button>
-                                <button onClick={() => handleDelete(bill._id)} className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"> 🗑️ Delete</button>
+                                <button onClick={() => handleArchive(bill._id)} className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"> 📦 Archive</button>
                                 <button onClick={() => handlePrint(bill)} className="bg-indigo-500 text-white px-5 py-2 rounded hover:bg-indigo-600"> 🖶️ Print</button>
                             </div>
                         </div>
@@ -119,36 +132,44 @@ const InvoiceList = () => {
 
             {/* Printable View */}
             {printBill && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full">
-                        {/* Printable Content */}
-                        <div ref={printRef}>
-                            <h2 className="text-xl font-bold mb-2">Invoice Preview</h2>
-                            <p><strong>Customer:</strong> {printBill.customer?.firstName} {printBill.customer?.lastName}</p>
-                            <p><strong>Vehicle:</strong> {printBill.vehicle?.model} - {printBill.vehicle?.plateNumber}</p>
-                            <p><strong>Date:</strong> {new Date(printBill.date).toLocaleDateString()}</p>
-                            <p><strong>Total:</strong> {printBill.totalPrice.toLocaleString()} €</p>
-                            <ul className="mt-2 list-disc pl-5">
-                                {printBill.services.map((srv, i) => (
-                                    <li key={i}>{srv.description} — {srv.price.toLocaleString()} €</li>
+                <div className="fixed inset-0 bg-white text-black p-10 z-50" ref={printRef}>
+                    <div className="max-w-xl mx-auto border rounded shadow p-6">
+                        <h2 className="text-xl font-bold text-center mb-4">🧾 Invoice Details</h2>
+                        <p><strong>🧍 Customer:</strong> {printBill.customer?.firstName} {printBill.customer?.lastName}</p>
+                        <p><strong>🚗 Vehicle:</strong> {printBill.vehicle?.brand} {printBill.vehicle?.model} ({printBill.vehicle?.plateNumber})</p>
+                        <p><strong>📅 Date:</strong> {new Date(printBill.date).toLocaleDateString()}</p>
+
+                        <div className="mt-4">
+                            <h4 className="font-semibold mb-2">Services:</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-sm">
+                                {printBill.services.map((srv, idx) => (
+                                    <li key={idx}>{srv.description} — €{srv.price.toLocaleString()}</li>
                                 ))}
                             </ul>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex justify-end mt-4 gap-3">
-                            <button
-                                onClick={() => setPrintBill(null)}
-                                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
-                            >
-                                ❌ Cancel
-                            </button>
+                        <div className="mt-4">
+                            <h4 className="font-semibold mb-2">Parts Used:</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-sm">
+                                {Array.isArray(printBill.maintenanceId?.partsUsed) && printBill.maintenanceId.partsUsed.length > 0 ? (
+                                    printBill.maintenanceId.partsUsed.map((part, idx) => (
+                                        <li key={idx}>{part.name}</li>
+                                    ))
+                                ) : (
+                                    <li className="text-gray-400">None</li>
+                                )}
+                            </ul>
+                        </div>
+
+                        <p className="mt-4 font-bold text-right text-lg">💰 Total: €{printBill.totalPrice.toLocaleString()}</p>
+
+                        <div className="mt-6 flex justify-end">
                             <button
                                 onClick={() => {
                                     window.print();
                                     setTimeout(() => setPrintBill(null), 500);
                                 }}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
                             >
                                 🖨️ Print Now
                             </button>
@@ -156,6 +177,7 @@ const InvoiceList = () => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };
