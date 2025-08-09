@@ -64,6 +64,7 @@ const AddBill = () => {
                 services: cleanedServices,
                 totalPrice,
                 maintenanceId,
+                partsUsed: form.partsUsed,
             });
 
             toast.success('Invoice created successfully!');

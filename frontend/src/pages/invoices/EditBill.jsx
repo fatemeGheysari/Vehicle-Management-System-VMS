@@ -48,7 +48,7 @@ const EditBill = () => {
                 setCustomers(customersRes.data);
                 setVehicles(vehiclesRes.data);
                 setAvailableParts(partsRes.data);
-                setForm({ partsUsed: billRes.data.partsUsed || [] });
+                setForm({ partsUsed: (billRes.data.maintenanceId?.partsUsed || []).map(p => p._id) });
             } catch (err) {
                 toast.error('Failed to fetch bill data: ' + err.message);
             } finally {

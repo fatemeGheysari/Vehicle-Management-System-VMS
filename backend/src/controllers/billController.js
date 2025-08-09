@@ -1,25 +1,37 @@
 import Bill from '../models/Bill.js';
+import MaintenanceRecord from '../models/MaintenanceRecord.js';
+import Vehicle from '../models/Vehicle.js';
 
 export const createBill = async (req, res) => {
     try {
-        const { customer, vehicle, services, date, maintenanceId } = req.body;
-
-        if (!services || services.length === 0) {
-            return res.status(400).json({ message: 'No services provided' });
-        }
+        const { customer, vehicle, services, date, maintenanceId, partsUsed = [] } = req.body;
+        if (!services?.length) return res.status(400).json({ message: 'No services provided' });
 
         const totalPrice = services.reduce((sum, item) => sum + item.price, 0);
 
-        const newBill = await Bill.create({
-            customer,
-            vehicle,
-            services,
-            totalPrice,
-            date,
-            maintenanceId
-        });
 
-        res.status(201).json(newBill);
+        let maintenanceRef = maintenanceId;
+        if (maintenanceRef) {
+            await MaintenanceRecord.findByIdAndUpdate(maintenanceRef, { partsUsed });
+        } else {
+            const newMaint = await MaintenanceRecord.create({
+                vehicleId: vehicle,
+                serviceDate: date || new Date(),
+                services: services.map(s => ({ description: s.description, cost: s.price })),
+                partsUsed
+            });
+            maintenanceRef = newMaint._id;
+        }
+
+        const newBill = await Bill.create({
+            customer, vehicle, services, totalPrice, date, maintenanceId: maintenanceRef
+        });
+        const populated = await Bill.findById(newBill._id)
+            .populate('customer', 'firstName lastName')
+            .populate('vehicle', 'model plateNumber brand')
+            .populate({ path: 'maintenanceId', populate: { path: 'partsUsed' } });
+
+        res.status(201).json(populated);
     } catch (err) {
         console.error('❌ Create Bill Error:', err);
         res.status(500).json({ message: 'Failed to create bill', error: err.message });
@@ -48,7 +60,8 @@ export const getBillById = async (req, res) => {
     try {
         const bill = await Bill.findById(req.params.id)
             .populate('customer')
-            .populate('vehicle');
+            .populate('vehicle')
+            .populate({ path: 'maintenanceId', populate: { path: 'partsUsed' } });
 
         if (!bill) {
             return res.status(404).json({ message: 'Bill not found' });
@@ -62,19 +75,34 @@ export const getBillById = async (req, res) => {
 
 export const updateBill = async (req, res) => {
     try {
-        const { customer, vehicle, services, totalPrice } = req.body;
+        const { customer, vehicle, services = [], totalPrice, maintenanceId, partsUsed = [], date } = req.body;
 
         const updatedBill = await Bill.findByIdAndUpdate(
             req.params.id,
-            { customer, vehicle, services, totalPrice },
+            { customer, vehicle, services, totalPrice, ...(date ? { date } : {}) },
             { new: true }
         );
 
-        if (!updatedBill) {
-            return res.status(404).json({ message: 'Bill not found' });
+        if (!updatedBill) return res.status(404).json({ message: 'Bill not found' });
+
+        if (maintenanceId) {
+            await MaintenanceRecord.findByIdAndUpdate(
+                maintenanceId,
+                {
+                    ...(date ? { serviceDate: date } : {}),
+                    services: services.map(s => ({ description: s.description, cost: s.price })),
+                    partsUsed
+                },
+                { new: true }
+            );
         }
 
-        res.json(updatedBill);
+        const populated = await Bill.findById(updatedBill._id)
+            .populate('customer', 'firstName lastName')
+            .populate('vehicle', 'model plateNumber brand')
+            .populate({ path: 'maintenanceId', populate: { path: 'partsUsed' } });
+
+        res.json(populated);
     } catch (err) {
         console.error('Update Bill Error:', err);
         res.status(500).json({ message: 'Failed to update bill' });
