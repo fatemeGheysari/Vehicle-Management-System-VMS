@@ -15,10 +15,10 @@ const router = express.Router();
 router.use(authMiddleware);
 
 // GET all vehicles
-router.get('/', getAllVehicles);
+router.get("/", authMiddleware, getAllVehicles);
 
 // POST create vehicle
-router.post('/', createVehicle);
+router.post("/", authMiddleware, createVehicle);
 
 // GET one vehicle
 router.get('/:id', getVehicleById);
@@ -30,3 +30,4 @@ router.put('/:id', updateVehicle);
 router.delete('/:id', deleteVehicle);
 
 export default router;
+

@@ -6,6 +6,7 @@ import AddMaintenanceModal from "../components/AddMaintenanceModal";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import InvoiceModal from "../components/InvoiceModal";
+import { AnimatePresence } from "framer-motion";
 
 
 export default function MaintenanceList() {

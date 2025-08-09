@@ -10,6 +10,7 @@ import EditBill from './pages/invoices/EditBill';
 import InvoicesPage from './pages/invoices/InvoicesPage';
 import EditMaintenance from "./pages/EditMaintenance";
 import ArchivedInvoices from "./pages/invoices/ArchivedInvoices";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -81,6 +82,14 @@ function App() {
         element={
           <ProtectedRoute>
             <ArchivedInvoices />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
           </ProtectedRoute>
         }
       />

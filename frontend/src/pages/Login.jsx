@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/useAuth";
+import { useEffect } from "react";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -10,6 +11,14 @@ function Login() {
 
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    if (auth?.token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,7 +37,7 @@ function Login() {
       localStorage.setItem("auth", JSON.stringify(authData));
       login(authData);
       setMessage("✅ Login successful!");
-      navigate("/vehicles");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setMessage("❌ Login failed: " + (err.response?.data?.message || err.message));
     }

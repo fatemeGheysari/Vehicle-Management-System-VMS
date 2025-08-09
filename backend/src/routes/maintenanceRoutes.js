@@ -26,8 +26,8 @@ router.get('/populated', async (req, res) => {
 router.use(authMiddleware);
 
 // Main routes
-router.post('/', createMaintenanceRecord);
-router.get('/', getAllMaintenanceRecords);
+router.post('/', authMiddleware, createMaintenanceRecord);
+router.get('/', authMiddleware, getAllMaintenanceRecords);
 router.get("/:id", getMaintenanceById);
 router.put("/:id", updateMaintenance);
 router.delete('/:id', deleteMaintenance);

@@ -11,6 +11,8 @@ import customerRoutes from './src/routes/customerRoutes.js';
 import billRoutes from './src/routes/billRoutes.js';
 import invoiceRoutes from './src/routes/invoiceRoutes.js';
 import partRoutes from './src/routes/partRoutes.js';
+import authRoutes from "./routes/authRoutes.js";
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 
 import './src/models/index.js';
@@ -22,6 +24,8 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use("/api", authMiddleware);
+app.use("/api/auth", authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
