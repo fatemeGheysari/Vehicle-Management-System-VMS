@@ -5,6 +5,7 @@ import {
     getAllMaintenanceRecords,
     deleteMaintenance,
     getMaintenanceById,
+    getRecentMaintenances,
     updateMaintenance
 } from '../controllers/maintenanceController.js';
 
@@ -28,6 +29,7 @@ router.use(authMiddleware);
 // Main routes
 router.post('/', authMiddleware, createMaintenanceRecord);
 router.get('/', authMiddleware, getAllMaintenanceRecords);
+router.get('/recent', authMiddleware, getRecentMaintenances);
 router.get("/:id", getMaintenanceById);
 router.put("/:id", updateMaintenance);
 router.delete('/:id', deleteMaintenance);

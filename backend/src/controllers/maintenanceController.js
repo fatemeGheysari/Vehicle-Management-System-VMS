@@ -152,4 +152,23 @@ export const updateMaintenance = async (req, res) => {
   }
 };
 
+// GET /api/maintenance/recent?limit=5
+export const getRecentMaintenances = async (req, res) => {
+  try {
+    // Parse and clamp limit between 1 and 50
+    const limit = Math.max(1, Math.min(parseInt(req.query.limit) || 5, 50));
+
+    const records = await MaintenanceRecord.find()
+      .sort({ serviceDate: -1, createdAt: -1 }) // newest first
+      .limit(limit)
+      .populate("vehicleId", "plateNumber brand model") // only needed fields
+      .populate({ path: "partsUsed", select: "name" }); // show part names only
+
+    return res.json(records);
+  } catch (error) {
+    console.error("❌ Error fetching recent maintenances:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 

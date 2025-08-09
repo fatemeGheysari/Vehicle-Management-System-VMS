@@ -15,6 +15,12 @@ export default function Dashboard() {
     });
     const [loading, setLoading] = useState(true);
 
+    // NEW: recent lists + states
+    const [recentMaint, setRecentMaint] = useState([]);
+    const [recentBills, setRecentBills] = useState([]);
+    const [loadingRecent, setLoadingRecent] = useState(true);
+    const [recentError, setRecentError] = useState(null);
+
     useEffect(() => {
         const fetchStats = async () => {
             try {
@@ -30,15 +36,38 @@ export default function Dashboard() {
                     invoices: bRes.data?.length || 0,
                 });
             } catch (err) {
-                // NOTE: Fail silently for now; in step 2 we can add toast
+                // NOTE: keep silent, can add toast later
                 console.error("Dashboard stats error:", err);
             } finally {
                 setLoading(false);
             }
         };
 
+        const fetchRecent = async () => {
+            setLoadingRecent(true);
+            setRecentError(null);
+            try {
+                // request 5 most recent items
+                const [maintRes, billsRes] = await Promise.all([
+                    axios.get("/api/maintenance/recent?limit=5"),
+                    axios.get("/api/bills/recent?limit=5"),
+                ]);
+
+                setRecentMaint(Array.isArray(maintRes.data) ? maintRes.data : []);
+                setRecentBills(Array.isArray(billsRes.data) ? billsRes.data : []);
+            } catch (err) {
+                console.error("Dashboard recent error:", err);
+
+                setRecentError("Failed to fetch recent data");
+            } finally {
+                setLoadingRecent(false);
+            }
+        };
+
         fetchStats();
+        fetchRecent();
     }, []);
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -113,10 +142,45 @@ export default function Dashboard() {
                         className="bg-white border rounded-xl p-4 shadow-sm"
                     >
                         <h2 className="font-semibold text-lg mb-3">Recent Maintenance</h2>
-                        {/* NOTE: Keep it simple for now */}
-                        <p className="text-gray-500 text-sm">
-                            Recent items will appear here. We will populate this in a next step.
-                        </p>
+
+                        {loadingRecent ? (
+                            <ListSkeleton />
+                        ) : recentError ? (
+                            <p className="text-red-500 text-sm">{recentError}</p>
+                        ) : recentMaint.length === 0 ? (
+                            <p className="text-gray-500 text-sm">No recent items.</p>
+                        ) : (
+                            <ul className="divide-y">
+                                {recentMaint.map((rec) => {
+                                    // derive title and totals safely
+                                    const v = rec?.vehicleId || {};
+                                    const title = v.brand
+                                        ? `${v.brand} ${v.model || ""} • ${v.plateNumber || ""}`
+                                        : `Maintenance ${rec?._id?.slice(-6) || ""}`;
+                                    const date = rec?.serviceDate ? new Date(rec.serviceDate) : null;
+                                    const total = Array.isArray(rec?.services)
+                                        ? rec.services.reduce((s, it) => s + (Number(it.cost) || 0), 0)
+                                        : 0;
+
+                                    return (
+                                        <li key={rec._id} className="py-3">
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <p className="font-medium text-gray-800">{title}</p>
+                                                    <p className="text-xs text-gray-500 mt-0.5">
+                                                        {date ? date.toLocaleDateString() : "No date"} • {rec?.services?.length || 0} services
+                                                    </p>
+                                                </div>
+                                                <div className="text-sm font-semibold text-gray-700">
+                                                    {total.toLocaleString()} $
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+
                     </motion.div>
 
                     <motion.div
@@ -126,9 +190,46 @@ export default function Dashboard() {
                         className="bg-white border rounded-xl p-4 shadow-sm"
                     >
                         <h2 className="font-semibold text-lg mb-3">Recent Invoices</h2>
-                        <p className="text-gray-500 text-sm">
-                            Recent items will appear here. We will populate this in a next step.
-                        </p>
+                        {loadingRecent ? (
+                            <ListSkeleton />
+                        ) : recentError ? (
+                            <p className="text-red-500 text-sm">{recentError}</p>
+                        ) : recentBills.length === 0 ? (
+                            <p className="text-gray-500 text-sm">No recent items.</p>
+                        ) : (
+                            <ul className="divide-y">
+                                {recentBills.map((bill) => {
+                                    const v = bill?.vehicle || {};
+                                    const c = bill?.customer || {};
+                                    const title = v.brand
+                                        ? `${v.brand} ${v.model || ""} • ${v.plateNumber || ""}`
+                                        : `Invoice ${bill?._id?.slice(-6) || ""}`;
+                                    const name =
+                                        c.firstName || c.lastName
+                                            ? `${c.firstName || ""} ${c.lastName || ""}`.trim()
+                                            : "Unknown customer";
+                                    const date = bill?.date ? new Date(bill.date) : null;
+                                    const total = Number(bill?.totalPrice || bill?.total || 0);
+
+                                    return (
+                                        <li key={bill._id} className="py-3">
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <p className="font-medium text-gray-800">{title}</p>
+                                                    <p className="text-xs text-gray-500 mt-0.5">
+                                                        {name} • {date ? date.toLocaleDateString() : "No date"}
+                                                    </p>
+                                                </div>
+                                                <div className="text-sm font-semibold text-gray-700">
+                                                    {total.toLocaleString()} $
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+
                     </motion.div>
                 </div>
             </div>
@@ -164,5 +265,19 @@ function StatCard({ title, value, subtitle, icon, loading, color }) {
                 </div>
             </div>
         </motion.div>
+    );
+}
+
+function ListSkeleton() {
+    // simple 4-row skeleton loader
+    return (
+        <ul className="space-y-3">
+            {[...Array(4)].map((_, i) => (
+                <li key={i} className="animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-2/3" />
+                    <div className="h-3 bg-gray-100 rounded w-1/3 mt-2" />
+                </li>
+            ))}
+        </ul>
     );
 }

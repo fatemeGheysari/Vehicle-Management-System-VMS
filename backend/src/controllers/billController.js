@@ -175,3 +175,22 @@ export const archiveBill = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+// GET /api/bills/recent?limit=5
+export const getRecentBills = async (req, res) => {
+    try {
+        // Parse and clamp limit between 1 and 50
+        const limit = Math.max(1, Math.min(parseInt(req.query.limit) || 5, 50));
+
+        const bills = await Bill.find({ archived: false })
+            .sort({ date: -1, createdAt: -1 }) // newest first
+            .limit(limit)
+            .populate("customer", "firstName lastName")
+            .populate("vehicle", "brand model plateNumber");
+
+        return res.json(bills);
+    } catch (err) {
+        console.error("❌ Error fetching recent bills:", err);
+        return res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
