@@ -30,10 +30,10 @@ export default function AddMaintenanceModal({ visible, onClose, onSave, vehicles
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const handlePartsChange = (e) => {
-        const selected = Array.from(e.target.selectedOptions, option => option.value);
-        setForm(prev => ({ ...prev, partsUsed: selected }));
-    };
+    //const handlePartsChange = (e) => {
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setForm(prev => ({ ...prev, partsUsed: selected }));
+    //  };
 
     const addService = () => {
         setForm(prev => ({

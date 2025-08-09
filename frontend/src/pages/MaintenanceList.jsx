@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axiosInstance";
-import { AnimatePresence, motion } from "framer-motion";
+//import { AnimatePresence, motion } from "framer-motion";
 import ConfirmModal from "../components/ConfirmModal";
 import AddMaintenanceModal from "../components/AddMaintenanceModal";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import InvoiceModal from "../components/InvoiceModal";
+
 
 export default function MaintenanceList() {
     const [records, setRecords] = useState([]);
@@ -13,7 +14,7 @@ export default function MaintenanceList() {
     const [expandedId, setExpandedId] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
-    const [recordToDelete, setRecordToDelete] = useState(null);
+    const [recordToDelete, _setRecordToDelete] = useState(null);
     const navigate = useNavigate();
     const [invoiceModalVisible, setInvoiceModalVisible] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -91,7 +92,7 @@ export default function MaintenanceList() {
 
                             <AnimatePresence mode="wait">
                                 {isOpen && (
-                                    <motion.div
+                                    <div
                                         key={`motion-${record._id}`}
                                         initial={{ height: 0, opacity: 0 }}
                                         animate={{ height: "auto", opacity: 1 }}
@@ -145,7 +146,7 @@ export default function MaintenanceList() {
 
 
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 )}
                             </AnimatePresence>
                         </li>

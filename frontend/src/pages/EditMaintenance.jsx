@@ -31,6 +31,7 @@ export default function EditMaintenance() {
                 setVehicles(vehiclesRes.data);
                 setAvailableParts(partsRes.data);
             } catch (err) {
+                console.error(err);
                 toast.error("Failed to load maintenance record");
             }
         };
@@ -77,6 +78,7 @@ export default function EditMaintenance() {
             toast.success("Maintenance updated successfully");
             navigate("/maintenance");
         } catch (err) {
+            console.error(err);
             toast.error("Failed to update maintenance");
         }
     };

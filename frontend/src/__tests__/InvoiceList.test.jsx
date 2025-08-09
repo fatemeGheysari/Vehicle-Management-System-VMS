@@ -4,6 +4,7 @@ import InvoiceList from '../pages/invoices/InvoiceList';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import axiosInstance from '../utils/axiosInstance';
+import { it, expect } from 'vitest';
 
 // ✅ Mock axiosInstance
 vi.mock('../utils/axiosInstance');
