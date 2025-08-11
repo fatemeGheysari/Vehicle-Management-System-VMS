@@ -11,6 +11,7 @@ import InvoicesPage from './pages/invoices/InvoicesPage';
 import EditMaintenance from "./pages/EditMaintenance";
 import ArchivedInvoices from "./pages/invoices/ArchivedInvoices";
 import Dashboard from "./pages/Dashboard";
+import AddPartOrder from "./pages/AddPartOrder";
 
 function App() {
   return (
@@ -93,9 +94,15 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/parts/:id/order"
+        element={
+          <ProtectedRoute>
+            <AddPartOrder />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
-
-
   );
 }
 
