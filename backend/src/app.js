@@ -32,4 +32,8 @@ app.use('/api/bills', billRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/parts', partRoutes);
 
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+});
+
 export default app;
