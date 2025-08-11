@@ -1,6 +1,7 @@
 import MaintenanceRecord from "../models/MaintenanceRecord.js";
 import Vehicle from "../models/Vehicle.js";
 import Bill from "../models/Bill.js";
+import Part from "../models/Part.js";
 
 export const createMaintenanceRecord = async (req, res) => {
   try {
@@ -20,6 +21,13 @@ export const createMaintenanceRecord = async (req, res) => {
 
     const savedRecord = await newRecord.save();
     const populatedRecord = await savedRecord.populate("vehicleId partsUsed");
+
+    // Reduce stock for each used part
+    if (partsUsed && partsUsed.length > 0) {
+      for (const partId of partsUsed) {
+        await Part.findByIdAndUpdate(partId, { $inc: { quantity: -1 } });
+      }
+    }
 
     // 2. Fetch vehicle and its owner
     const vehicle = await Vehicle.findById(vehicleId).populate("ownerId");
@@ -111,6 +119,11 @@ export const updateMaintenance = async (req, res) => {
   try {
     const { vehicleId, serviceDate, services, partsUsed } = req.body;
 
+    // Read previous maintenance to compare parts inventory
+    const oldRecord = await MaintenanceRecord.findById(req.params.id).lean();
+    const oldParts = (oldRecord?.partsUsed || []).map(p => p.toString());
+    const newParts = (partsUsed || []).map(p => p.toString());
+
     const updated = await MaintenanceRecord.findByIdAndUpdate(
       req.params.id,
       {
@@ -144,6 +157,24 @@ export const updateMaintenance = async (req, res) => {
     );
 
     console.log("🧾 Updated related invoice:", bill?._id);
+
+    try {
+      // Decrease inventory for newly added parts
+      for (const partId of newParts) {
+        if (!oldParts.includes(partId)) {
+          await Part.findByIdAndUpdate(partId, { $inc: { quantity: -1 } });
+        }
+      }
+      // Increase inventory for removed parts
+      for (const partId of oldParts) {
+        if (!newParts.includes(partId)) {
+          await Part.findByIdAndUpdate(partId, { $inc: { quantity: 1 } });
+        }
+      }
+    } catch (invErr) {
+      console.error("⚠️ Inventory update (maintenance) failed:", invErr?.message);
+    }
+
 
     res.json(updated);
   } catch (error) {

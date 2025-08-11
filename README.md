@@ -14,7 +14,9 @@ A full-stack application to manage vehicles, owners, maintenance records, invoic
 - Login / Authentication with JWT  
 - Store and retrieve data via MongoDB  
 - Protected frontend routes  
-- Clean and responsive UI with TailwindCSS  
+- Clean and responsive UI with TailwindCSS 
+- Archive and restore invoices (soft delete)
+- Dashboard with recent maintenances and invoices 
 - **Unit & Integration Tests** for backend using Jest and Supertest  
 - **In-memory test database** with `mongodb-memory-server`  
 - **CI pipeline with GitHub Actions**  
@@ -49,7 +51,7 @@ VMS/
 │   └── tests             # Backend test cases (Jest + Supertest)
 │
 ├── .github/workflows     # CI config (GitHub Actions)
-├── seed.js               # (Optional) Initial data for DB
+├── seed.js               # Initial data for DB
 └── .gitignore
 ```
 
@@ -69,7 +71,7 @@ cd vms-project
 ```bash
 cd backend
 npm install
-npm run dev
+node index.js
 ```
 
 ### 3. Setup frontend
@@ -120,12 +122,37 @@ Check `.github/workflows/ci.yml` for details.
 
 ## ✅ To Do / In Progress
 
-- [x] Implement Invoice (Bill) CRUD  
+- [x] Implement Invoice (Bill) CRUD
 - [x] Total price calculation from services  
 - [x] Filter invoices by customer/vehicle  
 - [x] Protect routes with JWT middleware  
 - [x] Add Delete & Edit functionality to invoices  
 - [x] Backend test coverage  
 - [x] CI with GitHub Actions  
-- [ ] Optional: Print invoice as PDF  
+- [x] Print invoice as PDF 
+- [x] Add invoice archive functionality and archived bills page
+- [x] Create dashboard with recent maintenances and invoices section 
 - [ ] Optional: Pagination & search  
+
+
+### 📌 Next Feature Ideas
+
+1. **Reports & Analytics**  
+   - Create a Reports page in the frontend  
+   - Show monthly revenue (from invoices) with a chart  
+   - Display number of maintenances/services in a selectable time range  
+   - Identify most used parts from `partsUsed`  
+   - Implement backend APIs for aggregated statistical data  
+
+2. **Inventory Management for Parts**  
+   - Add `stock` field to the `Part` model  
+   - Reduce stock when a part is used in a maintenance record  
+   - Show low-stock warnings on the dashboard  
+   - API to update stock and record new part orders  
+
+3. **Booking & Appointment System**  
+   - Create a new `Booking` model with customer, vehicle, date, and description  
+   - Allow customers to create bookings via the UI  
+   - Allow admin to approve, reject, or mark bookings as completed  
+   - Filter and display bookings by status (pending, approved, completed)  
+   

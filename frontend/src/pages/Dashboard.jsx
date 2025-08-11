@@ -15,11 +15,16 @@ export default function Dashboard() {
     });
     const [loading, setLoading] = useState(true);
 
-    // NEW: recent lists + states
+    // recent lists + states
     const [recentMaint, setRecentMaint] = useState([]);
     const [recentBills, setRecentBills] = useState([]);
     const [loadingRecent, setLoadingRecent] = useState(true);
     const [recentError, setRecentError] = useState(null);
+
+    //Low stock state
+    const [lowStockParts, setLowStockParts] = useState([]);
+    const [loadingStock, setLoadingStock] = useState(true);
+    const [stockError, setStockError] = useState(null);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -64,8 +69,28 @@ export default function Dashboard() {
             }
         };
 
+        const fetchLowStock = async () => {
+            setLoadingStock(true);
+            setStockError(null);
+
+            try {
+                const token = auth?.token;
+                const res = await axios.get("/api/parts/low-stock?threshold=5", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setLowStockParts(res.data || []);
+            } catch (err) {
+                console.error("Error fetching low stock parts", err);
+                setStockError("Failed to fetch low stock parts");
+            } finally {
+                setLoadingStock(false);
+            }
+        };
+
+
         fetchStats();
         fetchRecent();
+        fetchLowStock();
     }, []);
 
 
@@ -231,6 +256,38 @@ export default function Dashboard() {
                         )}
 
                     </motion.div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="bg-red-50 border-l-4 border-red-500 p-4 shadow-md rounded-lg"
+                    >
+                        <div className="flex items-center mb-2">
+                            <span className="text-red-500 text-xl mr-2">⚠️</span>
+                            <h2 className="font-semibold text-lg text-red-700">Low Stock Parts</h2>
+                        </div>
+
+                        {loadingStock ? (
+                            <ListSkeleton />
+                        ) : stockError ? (
+                            <p className="text-red-500 text-sm">{stockError}</p>
+                        ) : lowStockParts.length === 0 ? (
+                            <p className="text-gray-600 text-sm">All parts are sufficiently stocked.</p>
+                        ) : (
+                            <ul className="divide-y divide-red-200">
+                                {lowStockParts.map((part) => (
+                                    <li key={part._id} className="py-2 flex justify-between items-center">
+                                        <span className="font-medium text-red-800">{part.name}</span>
+                                        <span className="bg-red-200 text-red-800 text-sm px-2 py-1 rounded-full">
+                                            {part.quantity} left
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </motion.div>
+
+
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ export const getAllInvoices = async (req, res) => {
         if (vehicleId) filter.vehicleId = vehicleId;
 
         const invoices = await Invoice.find(filter)
-            .populate({ path: "customerId", select: "name", strictPopulate: false })
+            .populate({ path: "customerId", select: "firstName lastName", strictPopulate: false })
             .populate({ path: "vehicleId", select: "plateNumber", strictPopulate: false });
 
         res.json(invoices);

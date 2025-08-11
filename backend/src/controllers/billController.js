@@ -1,6 +1,7 @@
 import Bill from '../models/Bill.js';
 import MaintenanceRecord from '../models/MaintenanceRecord.js';
-import Vehicle from '../models/Vehicle.js';
+//import Vehicle from '../models/Vehicle.js';
+import Part from "../models/Part.js";
 
 export const createBill = async (req, res) => {
     try {
@@ -21,6 +22,12 @@ export const createBill = async (req, res) => {
                 partsUsed
             });
             maintenanceRef = newMaint._id;
+        }
+
+        if (partsUsed && partsUsed.length > 0) {
+            for (const partId of partsUsed) {
+                await Part.findByIdAndUpdate(partId, { $inc: { quantity: -1 } });
+            }
         }
 
         const newBill = await Bill.create({
@@ -77,6 +84,29 @@ export const updateBill = async (req, res) => {
     try {
         const { customer, vehicle, services = [], totalPrice, maintenanceId, partsUsed = [], date } = req.body;
 
+        // Prepare old/new parts arrays to compute inventory diff
+        let oldParts = [];
+        let newParts = [];
+
+        try {
+            // Read parts from the related maintenance record (old state)
+            if (maintenanceId) {
+                const oldMaint = await MaintenanceRecord.findById(maintenanceId).lean();
+                oldParts = (oldMaint?.partsUsed || []).map(p => p.toString());
+            }
+
+            // Determine new parts; prefer explicit partsUsed from the request if provided
+            if (typeof partsUsed !== "undefined") {
+                newParts = (partsUsed || []).map(p => p.toString());
+            } else if (maintenanceId) {
+                // Fallback: if partsUsed not provided directly, reuse the maintenance parts
+                const latestMaint = await MaintenanceRecord.findById(maintenanceId).lean();
+                newParts = (latestMaint?.partsUsed || []).map(p => p.toString());
+            }
+        } catch (e) {
+            console.error("Failed reading maintenance parts for inventory diff:", e?.message);
+        }
+
         const updatedBill = await Bill.findByIdAndUpdate(
             req.params.id,
             { customer, vehicle, services, totalPrice, ...(date ? { date } : {}) },
@@ -97,6 +127,26 @@ export const updateBill = async (req, res) => {
             );
         }
 
+        // 🔧 Inventory adjustments related to parts used in maintenance/bill
+        try {
+            // Decrease inventory for newly added parts
+            for (const partId of newParts) {
+                if (!oldParts.includes(partId)) {
+                    await Part.findByIdAndUpdate(partId, { $inc: { quantity: -1 } });
+                }
+            }
+
+            // Increase inventory for removed parts
+            for (const partId of oldParts) {
+                if (!newParts.includes(partId)) {
+                    await Part.findByIdAndUpdate(partId, { $inc: { quantity: 1 } });
+                }
+            }
+        } catch (invErr) {
+            console.error("⚠️ Inventory update (bill) failed:", invErr?.message);
+        }
+
+        // --- Return populated bill ---
         const populated = await Bill.findById(updatedBill._id)
             .populate('customer', 'firstName lastName')
             .populate('vehicle', 'model plateNumber brand')
@@ -176,21 +226,18 @@ export const archiveBill = async (req, res) => {
     }
 };
 
-// GET /api/bills/recent?limit=5
 export const getRecentBills = async (req, res) => {
     try {
-        // Parse and clamp limit between 1 and 50
         const limit = Math.max(1, Math.min(parseInt(req.query.limit) || 5, 50));
-
         const bills = await Bill.find({ archived: false })
-            .sort({ date: -1, createdAt: -1 }) // newest first
+            .sort({ date: -1, createdAt: -1 })
             .limit(limit)
             .populate("customer", "firstName lastName")
             .populate("vehicle", "brand model plateNumber");
 
-        return res.json(bills);
+        res.json(bills);
     } catch (err) {
         console.error("❌ Error fetching recent bills:", err);
-        return res.status(500).json({ message: "Server error", error: err.message });
+        res.status(500).json({ message: "Server error", error: err.message });
     }
 };

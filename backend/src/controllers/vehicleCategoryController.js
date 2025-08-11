@@ -3,8 +3,8 @@ import VehicleCategory from '../models/VehicleCategory.js';
 // Create new category
 export const createCategory = async (req, res) => {
   try {
-    const { name, description } = req.body;
-    const newCategory = new VehicleCategory({ name, description });
+    const { name } = req.body;
+    const newCategory = new VehicleCategory({ name });
     await newCategory.save();
     res.status(201).json(newCategory);
   } catch (err) {
