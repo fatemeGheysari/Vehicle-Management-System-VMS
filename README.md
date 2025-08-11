@@ -148,7 +148,9 @@ Check `.github/workflows/ci.yml` for details.
    - Add `stock` field to the `Part` model  
    - Reduce stock when a part is used in a maintenance record  
    - Show low-stock warnings on the dashboard  
-   - API to update stock and record new part orders  
+   - API to update stock and record new part orders
+   - Part order button  
+   - Display a list of orders placed for a specific item
 
 3. **Booking & Appointment System**  
    - Create a new `Booking` model with customer, vehicle, date, and description  
