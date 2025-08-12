@@ -2,7 +2,9 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
+  // baseURL: "http://localhost:3000",
+  baseURL: "https://vehicle-management-system-vms.onrender.com", // Backend on Render
+  withCredentials: true,
 });
 
 // Add token to every request if it exists
