@@ -3,13 +3,8 @@ import { useAuth } from "../context/useAuth";
 import TopNav from "./TopNav";
 import { jwtDecode } from "jwt-decode";
 
-const logout = () => {
-  localStorage.removeItem("token");
-  window.location.href = "/";
-};
-
 export default function ProtectedRoute({ children }) {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const location = useLocation();
 
   if (!auth?.token) {
