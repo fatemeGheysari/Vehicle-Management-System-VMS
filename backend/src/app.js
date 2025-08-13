@@ -59,6 +59,11 @@ app.use('/api/bills', billRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/parts', partRoutes);
 
+// Redirect root to the Vercel frontend
+app.get("/", (req, res) => {
+    res.redirect(302, "https://vehicle-management-system-vms.vercel.app/");
+});
+
 app.get("/health", (req, res) => {
     res.json({ status: "ok" });
 });
